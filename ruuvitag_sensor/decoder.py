@@ -256,6 +256,11 @@ class Df5Decoder(object):
     def _get_mac(self, data):
         return ''.join('{:02x}'.format(x) for x in data[18:24])
 
+    def _get_rssi(self, data):
+        """Return RSSI"""
+        rssi = twos_complement(data[-1], 8)
+        return rssi
+
     def decode_data(self, data):
         """
         Decode sensor data.
@@ -279,7 +284,8 @@ class Df5Decoder(object):
                 'battery': self._get_battery(byte_data),
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data)
+                'mac': self._get_mac(byte_data),
+                'rssi': self._get_rssi(byte_data)
             }
         except Exception:
             log.exception('Value: %s not valid', data)
